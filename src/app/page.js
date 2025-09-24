@@ -1,8 +1,7 @@
 "use client";
-import React, { useState, useEffect } from "react";;
+import React, { useState, useEffect } from "react";
 import FlowCanvas from "@/components/FlowCanvas";
 import SettingsPanel from "@/components/SettingsPanel";
-import SaveBar from "@/components/SaveBar";
 import "./globals.css";
 import NodesPanel from "@/components/NodesPanel";
 
@@ -29,10 +28,6 @@ export default function App() {
 
   return (
     <div className="app-root">
-      <div className="left-panel">
-        <NodesPanel setNodes={setNodes} />
-      </div>
-
       <div className="center-panel">
         <FlowCanvas
           nodes={nodes}
@@ -44,19 +39,19 @@ export default function App() {
       </div>
 
       <div className="right-panel">
-        <SettingsPanel
-          selectedNode={selectedNode}
-          setNodes={setNodes}
-          nodes={nodes}
-        />
+        {selectedNode ? (
+          <SettingsPanel
+            selectedNode={selectedNode}
+            setNodes={setNodes}
+            nodes={nodes}
+            onBack={() => setSelectedNode(null)}
+          />
+        ) : (
+          <NodesPanel setNodes={setNodes} />
+        )}
       </div>
 
-      <SaveBar
-        nodes={nodes}
-        edges={edges}
-        onSave={handleSave}
-        lastSaved={lastSavedPayload}
-      />
+
     </div>
   );
 }
