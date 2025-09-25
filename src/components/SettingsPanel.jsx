@@ -1,17 +1,33 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-export default function SettingsPanel({ selectedNode, setNodes, nodes, onBack }) {
-  // Find the latest node data from nodes array
-  const node = nodes.find((n) => n.id === selectedNode.id) || selectedNode;
+export default function SettingsPanel({ selectedNode, onBack }) {
+  const [localData, setLocalData] = useState({});
+
+  // Update local data when selected node changes
+  useEffect(() => {
+    if (selectedNode && selectedNode.data) {
+      setLocalData(selectedNode.data);
+    }
+  }, [selectedNode]);
+
+  if (!selectedNode) return null;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setNodes((nds) =>
-      nds.map((n) =>
-        n.id === node.id ? { ...n, data: { ...n.data, [name]: value } } : n
-      )
-    );
+  
+    // Update local state immediately for responsive UI
+    setLocalData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Update the actual node data
+    if (selectedNode.updateNodeData) {
+      selectedNode.updateNodeData({ [name]: value });
+    } else {
+      console.error("updateNodeData function is not available");
+    }
   };
 
   return (
@@ -71,7 +87,7 @@ export default function SettingsPanel({ selectedNode, setNodes, nodes, onBack })
           <input
             type="text"
             name="label"
-            value={node.data.label || ""}
+            value={localData.label || ""}
             onChange={handleChange}
             style={{ 
               width: "100%", 
@@ -100,7 +116,7 @@ export default function SettingsPanel({ selectedNode, setNodes, nodes, onBack })
           </label>
           <textarea
             name="text"
-            value={node.data.text || ""}
+            value={localData.text || ""}
             onChange={handleChange}
             style={{ 
               width: "100%", 
@@ -119,72 +135,6 @@ export default function SettingsPanel({ selectedNode, setNodes, nodes, onBack })
             onBlur={(e) => e.target.style.borderColor = "#ddd"}
           />
         </div>
-
-        {/* Additional fields section */}
-        {Object.entries(node.data || {}).map(([key, value]) => {
-          // Skip label and text as they're already handled
-          if (key === 'label' || key === 'text') return null;
-          
-          // Only render string/number values that can be edited in a text field
-          if (typeof value !== 'string' && typeof value !== 'number') return null;
-          
-          return (
-            <div className="form-group" key={key}>
-              <label style={{
-                display: 'block',
-                marginBottom: '8px',
-                fontWeight: '500',
-                fontSize: '0.95rem',
-                color: '#444',
-                textTransform: 'capitalize'
-              }}>
-                {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:
-              </label>
-              <input
-                type="text"
-                name={key}
-                value={value || ""}
-                onChange={handleChange}
-                style={{ 
-                  width: "100%", 
-                  padding: "10px 12px",
-                  borderRadius: "6px",
-                  border: "1px solid #ddd",
-                  fontSize: "0.95rem",
-                  boxSizing: "border-box",
-                  transition: "border-color 0.2s ease",
-                  outline: "none"
-                }}
-                onFocus={(e) => e.target.style.borderColor = "#3b82f6"}
-                onBlur={(e) => e.target.style.borderColor = "#ddd"}
-              />
-            </div>
-          );
-        })}
-      </div>
-      
-      <div className="settings-actions" style={{
-        marginTop: '24px',
-        display: 'flex',
-        justifyContent: 'flex-end'
-      }}>
-        <button
-          style={{
-            padding: '8px 16px',
-            background: '#3b82f6',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            fontWeight: '500',
-            cursor: 'pointer',
-            transition: 'background 0.2s ease'
-          }}
-          onMouseOver={(e) => e.currentTarget.style.background = '#2563eb'}
-          onMouseOut={(e) => e.currentTarget.style.background = '#3b82f6'}
-          onClick={() => alert('Changes applied!')}
-        >
-          Apply Changes
-        </button>
       </div>
     </div>
   );

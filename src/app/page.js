@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from "react";
 import FlowCanvas from "@/components/FlowCanvas";
 import SettingsPanel from "@/components/SettingsPanel";
-import "./globals.css";
 import NodesPanel from "@/components/NodesPanel";
+import Navbar from "@/components/Navbar";
+import "./globals.css";
 
 export default function App() {
   const [nodes, setNodes] = useState([]);
@@ -27,31 +28,33 @@ export default function App() {
   };
 
   return (
-    <div className="app-root">
-      <div className="center-panel">
-        <FlowCanvas
-          nodes={nodes}
-          setNodes={setNodes}
-          edges={edges}
-          setEdges={setEdges}
-          setSelectedNode={setSelectedNode}
-        />
-      </div>
-
-      <div className="right-panel">
-        {selectedNode ? (
-          <SettingsPanel
-            selectedNode={selectedNode}
-            setNodes={setNodes}
+    <div className="app-container">
+      <Navbar />
+      <div className="content-container">
+        <div className="flow-canvas-container">
+          <FlowCanvas
             nodes={nodes}
-            onBack={() => setSelectedNode(null)}
+            setNodes={setNodes}
+            edges={edges}
+            setEdges={setEdges}
+            setSelectedNode={setSelectedNode}
           />
-        ) : (
-          <NodesPanel setNodes={setNodes} />
-        )}
+        </div>
+
+        {/* right sidebar panel */}
+        <div className="sidebar-panel">
+          {selectedNode ? (
+            <SettingsPanel
+              selectedNode={selectedNode}
+              setNodes={setNodes}
+              nodes={nodes}
+              onBack={() => setSelectedNode(null)}
+            />
+          ) : (
+            <NodesPanel setNodes={setNodes} />
+          )}
+        </div>
       </div>
-
-
     </div>
   );
 }

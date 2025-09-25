@@ -6,7 +6,55 @@
 }
 
 * { box-sizing: border-box; }
-html,body { height:100%; margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: var(--bg); }
+html,body { height:100%; margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: var(--bg); overflow: hidden; }
+
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  overflow: hidden; /* Prevent scroll on the main body */
+}
+
+/* App container - takes full viewport height */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+}
+
+/* Content container - holds sidebar and flow canvas */
+.content-container {
+  display: flex;
+  flex: 1; /* Take remaining space after navbar */
+  overflow: hidden; /* Prevent content from overflowing */
+}
+
+/* Sidebar panel styling */
+.sidebar-panel {
+  width: 280px;
+  border-right: 1px solid #e5e7eb;
+  background-color: #fff;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 10;
+}
+
+/* Flow canvas container */
+.flow-canvas-container {
+  flex: 1; /* Takes up remaining width */
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
 
 /* layout */
 .app-root { display: grid; grid-template-columns: 1fr 320px; grid-template-rows: 1fr 48px; gap: 0; height: 100vh; }
@@ -31,3 +79,264 @@ html,body { height:100%; margin:0; font-family: Inter, ui-sans-serif, system-ui,
 .info { color:var(--muted); font-size:13px; }
 
 .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+
+
+
+
+/* Custom Flow UI Styles */
+
+/* Overall flow container styling */
+.custom-flow {
+  background-color: #f8fafc;
+}
+
+/* Nodes styling */
+.custom-node {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease-in-out;
+  min-width: 150px;
+}
+
+.custom-node:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.selected-node {
+  border: 2px solid #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+/* Node handles (connection points) */
+.react-flow__handle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  border: 2px solid white;
+  transition: all 0.2s ease;
+}
+
+.react-flow__handle:hover {
+  background-color: #2563eb;
+  transform: scale(1.3);
+}
+
+.react-flow__handle-source {
+  top: 50%;
+  right: -6px;
+}
+
+.react-flow__handle-target {
+  top: 50%;
+  left: -6px;
+}
+
+/* Edge styling */
+.react-flow__edge-path {
+  stroke-width: 2;
+  stroke: #3b82f6;
+}
+
+.react-flow__edge-text {
+  font-size: 12px;
+  font-weight: 500;
+  fill: #3b82f6;
+}
+
+/* Animated edges */
+.react-flow__edge-path-animated {
+  stroke-dasharray: 5,5;
+  animation: flowAnimation 1s linear infinite;
+}
+
+@keyframes flowAnimation {
+  from {
+    stroke-dashoffset: 10;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Custom Flow UI Styles - Performance optimized */
+
+/* Overall flow container styling */
+.custom-flow {
+  background-color: #f8fafc;
+}
+
+/* Nodes styling - simplified transitions */
+.custom-node {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-width: 150px;
+  /* Remove transition for better performance during dragging */
+  will-change: transform; /* Optimize for GPU acceleration */
+}
+
+/* Only apply hover effects when not dragging */
+.custom-node:not(.dragging):hover {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.selected-node {
+  border: 2px solid #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+/* Node handles (connection points) */
+.react-flow__handle {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  border: 2px solid white;
+  /* Remove transition for better performance */
+}
+
+/* Simplify hover effect */
+.react-flow__handle:hover {
+  background-color: #2563eb;
+}
+
+.react-flow__handle-source {
+  top: 50%;
+  right: -5px;
+}
+
+.react-flow__handle-target {
+  top: 50%;
+  left: -5px;
+}
+
+/* Edge styling - simplified */
+.react-flow__edge-path {
+  stroke-width: 2;
+  stroke: #3b82f6;
+}
+
+.react-flow__edge-text {
+  font-size: 12px;
+  font-weight: 500;
+  fill: #3b82f6;
+}
+
+/* Remove animated edges for better performance */
+/* 
+.react-flow__edge-path-animated {
+  stroke-dasharray: 5,5;
+  animation: flowAnimation 1s linear infinite;
+}
+
+@keyframes flowAnimation {
+  from {
+    stroke-dashoffset: 10;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+} 
+*/
+
+/* Controls styling */
+.custom-controls {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.react-flow__controls-button {
+  border: none;
+  background-color: white;
+  color: #475569;
+  border-bottom: 1px solid #f1f5f9;
+  width: 24px;
+  height: 24px;
+}
+
+/* Save button styling */
+.flow-save-button {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  z-index: 10;
+  padding: 8px 16px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+}
+
+/* Node content styling - simplified */
+.node-header {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #1e293b;
+  font-size: 14px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 6px;
+}
+
+.node-content {
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.4;
+}
+
+/* Different node types with different colors - simplified */
+.message-node {
+  border-top: 3px solid #3b82f6;
+}
+
+.input-node {
+  border-top: 3px solid #10b981;
+}
+
+.condition-node {
+  border-top: 3px solid #f59e0b;
+}
+
+.output-node {
+  border-top: 3px solid #8b5cf6;
+}
+
+/* Utility class for temporarily disabling transitions during drag */
+.dragging {
+  transition: none !important;
+}
+
+/* Additional utility classes */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}

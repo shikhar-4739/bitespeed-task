@@ -9,9 +9,35 @@ export default function NodesPanel() {
   };
 
   return (
-    <div className="nodes-panel">
-      <div className="panel-header">
-        <h3>Select a Node</h3>
+    <div
+      className="nodes-panel"
+      style={{
+        padding: "16px",
+        height: "100%",
+        overflow: "auto",
+        backgroundColor: "#ffffff",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <div
+        className="panel-header"
+        style={{
+          marginBottom: "20px",
+          paddingBottom: "12px",
+          borderBottom: "1px solid #eaeaea",
+        }}
+      >
+        <h3
+          style={{
+            fontSize: "1.1rem",
+            fontWeight: "600",
+            color: "#333",
+            margin: 0,
+          }}
+        >
+          Select a Node
+        </h3>
       </div>
 
       <div className="nodes-container">

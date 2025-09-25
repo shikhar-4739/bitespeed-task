@@ -14,11 +14,11 @@ import { nodeTypesMap, nodeRegistry } from "../nodes";
 
 const STORAGE_KEY = "chatbot-flow";
 
-export default function FlowCanvas({ setSelectedNode }) {
+export default function FlowCanvas({ setSelectedNode, selectedNode }) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  // 🔹 Load saved flow once on mount
+  // Load saved flow once on mount
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -32,19 +32,26 @@ export default function FlowCanvas({ setSelectedNode }) {
     }
   }, [setNodes, setEdges]);
 
-  // 🔹 Connect nodes
+  // Connect nodes
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
   );
 
-  // 🔹 Allow drag-over
   const onDragOver = useCallback((event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
 
-  // 🔹 Handle drop from NodesPanel
+  const defaultEdgeOptions = {
+    style: { stroke: "#4b5563", strokeWidth: 2 },
+    markerEnd: {
+      type: "arrowclosed", // solid arrow
+      color: "#4b5563",
+    },
+  };
+
+  // Handle drop from NodesPanel
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
@@ -66,17 +73,30 @@ export default function FlowCanvas({ setSelectedNode }) {
     [setNodes]
   );
 
-  // 🔹 Handle node selection
+  // Handle node selection
   const onNodeClick = useCallback(
-    (_, node) => setSelectedNode(node),
-    [setSelectedNode]
+    (_, node) => {
+      setSelectedNode({
+        id: node.id,
+        data: node.data,
+        type: node.type,
+        updateNodeData: (newData) => {
+          setNodes((nds) =>
+            nds.map((n) =>
+              n.id === node.id ? { ...n, data: { ...n.data, ...newData } } : n
+            )
+          );
+        },
+      });
+    },
+    [setSelectedNode, setNodes]
   );
 
   // 🔹 Validate before saving
   const validateFlow = () => {
     const connectedTargets = new Set(edges.map((e) => e.target));
     const unconnectedNodes = nodes.filter((n) => !connectedTargets.has(n.id));
-    return unconnectedNodes.length <= 1; // ✅ only one unconnected allowed
+    return unconnectedNodes.length <= 1; 
   };
 
   // 🔹 Save to localStorage
@@ -89,33 +109,52 @@ export default function FlowCanvas({ setSelectedNode }) {
     alert("Flow saved ✅");
   };
 
+  // Update the FlowCanvas when nodes change in parent component
+  useEffect(() => {
+    if (selectedNode && selectedNode.updated) {
+      // Trigger a re-render to show updated node
+      setNodes([...nodes]);
+    }
+  }, [selectedNode, nodes, setNodes]);
+
   return (
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      onDrop={onDrop}
-      onDragOver={onDragOver}
-      onNodeClick={onNodeClick}
-      nodeTypes={nodeTypesMap}
-      fitView
-    >
-      <Background />
-      <Controls />
-      <button
-        style={{
-          position: "absolute",
-          right: 20,
-          top: 20,
-          zIndex: 10,
-          padding: "6px 12px",
-        }}
-        onClick={handleSave}
+    <div style={{ width: "100%", height: "100%" }}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onDrop={onDrop}
+        onDragOver={onDragOver}
+        onNodeClick={onNodeClick}
+        nodeTypes={nodeTypesMap}
+        defaultEdgeOptions={defaultEdgeOptions}
+        fitView
+        style={{ background: "#f9fafb" }}
       >
-        Save Flow
-      </button>
-    </ReactFlow>
+        <Background />
+        <Controls />
+        <button
+          style={{
+            position: "absolute",
+            right: 20,
+            top: 20,
+            zIndex: 10,
+            padding: "8px 16px",
+            background: "#3b82f6",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            fontWeight: "500",
+            cursor: "pointer",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+          }}
+          onClick={handleSave}
+        >
+          Save Flow
+        </button>
+      </ReactFlow>
+    </div>
   );
 }

@@ -1,17 +1,26 @@
-import TextMessageNode from "./TextMessageNode";
-import { createTextMessageNode, TEXT_MESSAGE_TYPE } from "./textFactory";
+import { nanoid } from "nanoid";
+import CustomNode from "./CustomNode";
 
+// Node types for ReactFlow
+export const nodeTypesMap = {
+  message: CustomNode,
+};
+
+// Node registry for node creation 
 export const nodeRegistry = [
   {
-    type: TEXT_MESSAGE_TYPE,
+    type: "message",
+    label: "Message Node",
+    icon: "💬",
     title: "Text Message",
-    icon: "📝",
-    create: createTextMessageNode,
-    component: TextMessageNode,
+    create: (position) => ({
+      id: nanoid(),
+      type: "message",
+      position,
+      data: {
+        label: "Send Message",
+        text: "text",
+      },
+    }),
   },
 ];
-
-export const nodeTypesMap = nodeRegistry.reduce((acc, item) => {
-  acc[item.type] = item.component;
-  return acc;
-}, {});
