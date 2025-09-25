@@ -2,7 +2,11 @@
 
 This project aims to create a simple and extensible Chatbot Flow Builder using React. The builder will allow users to design chatbot flows by connecting multiple messages together to determine their order of execution.
 
-![WhatsApp Flow Builder](https://placeholder-for-screenshot.png)
+
+
+
+https://github.com/user-attachments/assets/8d2ff249-069a-446e-88c7-665b954198e9
+
 
 ## Features
 
