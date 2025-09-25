@@ -18,7 +18,6 @@ This project aims to create a simple and extensible Chatbot Flow Builder using R
 1. Clone the repository:
 ```bash
 git clone https://github.com/your-username/bite-speed-frontend-task.git
-cd bite-speed-frontend-task
 ```
 
 2. Install dependencies:
